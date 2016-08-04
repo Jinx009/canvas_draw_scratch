@@ -3,62 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>刮刮乐</title>
+<title>刮刮乐--建议在手机浏览器或者PC浏览器响应式模式下预览</title>
 <script src="js/jquery-1.9.1.js" ></script>
 <script type="text/javascript">
 $(function(){
 	draw();
 })
-function draw()
-{
-	var c=document.getElementById("myCanvas");
-	var clientWidth = $(document).width();
+function draw(){
+	var c=document.getElementById("myCanvas");//定义一个遮罩层
+	var clientWidth = $(document).width();//获取浏览器当前的可见宽度
 	var ctx=c.getContext("2d");
-	ctx.clearRect(0,0,c.width,c.height); 
-	var img= new Image();
-	img.src = "img/gua_bg.png";
-	console.log(img);
-	img.onload = function(){
-		//var pat=ctx.createPattern(img,"repeat");
+	ctx.clearRect(0,0,c.width,c.height); //初始化Canvas遮罩层
+	var img= new Image();//定义遮罩层上悬浮的图片
+	img.src = "img/gua_bg.png";//定义图片路径
+	img.onload = function(){//必须在图片加载完成后才可以执行绘制
 		ctx.rect(0,0,clientWidth,150);
-		//ctx.fillStyle=pat;
-		//ctx.fillStyle="red";
-		console.log(c.width);
-		//ctx.fill();
-		ctx.drawImage(img,0,0,clientWidth,154);
-		ctx.textAlign="center";
-		ctx.font = "22px MicrosoftYahei";
-		ctx.fillText("免费刮奖",c.width/2,50);
-		ctx.font = "18px MicrosoftYahei";
-		ctx.fillText("赢取888元现金红包",c.width/2,100);
-		
+		ctx.drawImage(img,0,0,clientWidth,154);//将图片绘制到Canvas上
+		ctx.textAlign="center";//设置文字样式居中
+		ctx.font = "22px MicrosoftYahei";//设置文字大小和字体
+		ctx.fillText("免费刮奖",c.width/2,50);//设置文字内容以及居中点和起始高度
+		ctx.font = "18px MicrosoftYahei";//设置第二行字大小和字体
+		ctx.fillText("赢取888元现金红包",c.width/2,100);//设置文字内容以及居中点和起始高度
 	}
-    c.addEventListener("touchmove", function(event) {
+    c.addEventListener("touchmove", function(event) {//为遮罩层添加鼠标拖动事件
       event.preventDefault();
       for(var i in event.targetTouches){
         var touch = event.targetTouches[i];
-        ctx.clearArc(touch.pageX,touch.pageY,20);
+        ctx.clearArc(touch.pageX,touch.pageY,20);//根据当前触碰点擦除一圆形区域
       }
     }, false);
-    c.addEventListener("touchstart", function(event) {
+    c.addEventListener("touchstart", function(event) {//鼠标触碰开始执行时间
       event.preventDefault();
       for(var i in event.targetTouches){
         var touch = event.targetTouches[i];
-        ctx.clearArc(touch.pageX,touch.pageY,20);
+        ctx.clearArc(touch.pageX,touch.pageY,20);//擦除当前触碰点圆形区域内容
       }
     }, false);
 }
 
-CanvasRenderingContext2D.prototype.clearArc=function(x,y,radius){
+CanvasRenderingContext2D.prototype.clearArc=function(x,y,radius){//自定义擦除事件
   var distance = function(x0,y0,x1,y1){
     var dis = Math.sqrt(Math.pow(x0-x1,2)+Math.pow(y0-y1,2));
-    //return Math.ceil(dis*10000)/10000;
     return Math.round(dis*10000)/10000;
   };
   //首先获得矩形
-  var diameter = radius*2;
+  var diameter = radius*2;//获取直径
   var startX = 0;
-  if(null==x||''==x||undefined==x){
+  if(null==x||''==x||undefined==x){//防止找不到Console出现错误
 	  startX = 0;
   }else{
   	startX = parseInt(x-radius);
@@ -69,7 +60,7 @@ CanvasRenderingContext2D.prototype.clearArc=function(x,y,radius){
   cx = cx-startX;
   
   var startY = 0;
-  if(null==y||''==y||undefined==y){
+  if(null==y||''==y||undefined==y){//防止找不到Console出现错误
 	  startY = 0;
   }else{
   	startY = parseInt(y-radius);
@@ -79,7 +70,7 @@ CanvasRenderingContext2D.prototype.clearArc=function(x,y,radius){
   var cy = radius-(0-startY);
   startY = startY<0?0:startY;
   cy = cy-startY;
-  var imgData = this.getImageData(startX,startY,diameter,diameter);//需要处理的矩形
+  var imgData = this.getImageData(startX,startY,diameter,diameter);//需要处理的矩形，此处使用getImageData程序需要在Web荣旗下预览，tomcat或者nginx
   for (var i=0;i<imgData.data.length;i+=4){
     //矩阵内的坐标
     var ii = i/4;
@@ -145,11 +136,12 @@ CanvasRenderingContext2D.prototype.clearArc=function(x,y,radius){
 </style>
 </head>
 <body>
+<!--刮开之后显示的中奖内容-->
 <div class="bg-value" >
 	<div class="title" >百度糯米5元代金券</div>
 	<div class="desc" >运气不错，快和小伙伴一起玩吧！</div>
 </div>
+<!--需要刮开的遮罩层-->
 <canvas id="myCanvas" class="myCanvas" ></canvas>
-
 </body>
 </html>
